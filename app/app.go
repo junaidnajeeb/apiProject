@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"apiProject/controller"
 
@@ -17,9 +18,15 @@ func SetupConfiguration() {
 	fmt.Println("app => SetupConfiguration")
 
 	// name of config file (without extension)
-	viper.SetConfigName("api")
+	viper.SetConfigName("app")
 	// look for config in the config working directory
 	viper.AddConfigPath("config")
+
+	// this way we can pass env var and read it as APP_PORT
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	// Enable VIPER to read Environment Variables
+	viper.AutomaticEnv()
 
 	// Find and read the config file
 	err := viper.ReadInConfig()
