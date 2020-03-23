@@ -44,7 +44,7 @@ func SetupRoutes() {
 	router.HandleFunc("/users", controller.CreateUpdateUserHandler).Methods("POST")
 	router.HandleFunc("/users/{id}", controller.DeleteUserHandler).Methods("DELETE")
 
-	port := viper.GetString("port")
+	port := viper.GetString("api.port")
 
 	fmt.Println("Starting API on port:", port)
 
