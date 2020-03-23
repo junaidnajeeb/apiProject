@@ -45,3 +45,124 @@ go install apiProject
   go get -u github.com/sqs/goreturns
   go get -u github.com/spf13/viper
 ```
+
+## API details
+
+#### GET home
+```
+curl -v --location --request GET 'http://localhost:8080'
+> GET / HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Mon, 23 Mar 2020 20:03:29 GMT
+< Content-Length: 16
+<
+"Welcome home!"
+```
+
+#### POST create/update User
+```
+curl -v --location --request POST 'http://localhost:8080/users' \
+> --header 'Content-Type: application/json' \
+> --data-raw '{
+>     "id": 100,
+>     "Name": "Some Name updated",
+>     "Description": "Some Description"
+> }'
+> POST /users HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 89
+>
+< HTTP/1.1 201 Created
+< Content-Type: application/json
+< Date: Mon, 23 Mar 2020 19:55:55 GMT
+< Content-Length: 38
+<
+{"id":100,"name":"Some Name updated"}
+```
+
+#### GET All Users
+```
+curl -v --location --request GET 'http://localhost:8080/users/'
+> GET /users/ HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+>
+< HTTP/1.1 301 Moved Permanently
+< Content-Type: text/html; charset=utf-8
+< Location: /users
+< Date: Mon, 23 Mar 2020 19:57:33 GMT
+< Content-Length: 41
+<
+> GET /users HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Mon, 23 Mar 2020 19:57:33 GMT
+< Content-Length: 46
+<
+{"100":{"id":100,"name":"Some Name updated"}}
+```
+
+#### GET One User
+```
+curl -v --location --request GET 'http://localhost:8080/users/100'
+> GET /users/100 HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Mon, 23 Mar 2020 19:58:59 GMT
+< Content-Length: 38
+<
+{"id":100,"name":"Some Name updated"}
+```
+
+#### DELETE One User
+```
+curl -v --location --request DELETE 'http://localhost:8080/users/100' \
+> --header 'Content-Type: application/json'
+> DELETE /users/100 HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Type: application/json
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Mon, 23 Mar 2020 20:00:48 GMT
+< Content-Length: 10
+<
+"Deleted"
+```
+
+##### User if not exist
+```
+curl -v --location --request DELETE 'http://localhost:8080/users/100' \
+> --header 'Content-Type: application/json'
+> DELETE /users/100 HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.54.0
+> Accept: */*
+> Content-Type: application/json
+>
+< HTTP/1.1 404 Not Found
+< Content-Type: application/json
+< Date: Mon, 23 Mar 2020 20:00:52 GMT
+< Content-Length: 58
+<
+{"ErrorMessage":"Requested user not found","ErrorCode":0}
+```
