@@ -1,7 +1,7 @@
 
 ## Setup go path in VS code
 settings.json file
-```
+```json
 {
   "window.zoomLevel": 1,
   "editor.renderWhitespace": "all",
@@ -19,7 +19,7 @@ settings.json file
 ```
 
 ## Setup go path in .bash_profile
-```
+```bash
 # GOLANG SETTINGS
 export GOPATH=$HOME/Documents/gitRepos/go-workspace # don't forget to change your path correctly!
 export PATH=$PATH:$GOPATH
@@ -29,11 +29,11 @@ export GOBIN=$GOPATH/bin
 
 ```
 ## Under workspace->src directory
-```
+```bash
 go install apiProject
 ```
 ## Run from src folder
-```
+```bash
 ./apiProject
 ```
 
@@ -49,7 +49,7 @@ go install apiProject
 ## API details
 
 #### GET home
-```
+```javascript
 curl -v --location --request GET 'http://localhost:8080'
 > GET / HTTP/1.1
 > Host: localhost:8080
@@ -65,7 +65,7 @@ curl -v --location --request GET 'http://localhost:8080'
 ```
 
 #### POST create/update User
-```
+```javascript
 curl -v --location --request POST 'http://localhost:8080/users' \
 > --header 'Content-Type: application/json' \
 > --data-raw '{
@@ -89,7 +89,7 @@ curl -v --location --request POST 'http://localhost:8080/users' \
 ```
 
 #### GET All Users
-```
+```javascript
 curl -v --location --request GET 'http://localhost:8080/users/'
 > GET /users/ HTTP/1.1
 > Host: localhost:8080
@@ -116,7 +116,7 @@ curl -v --location --request GET 'http://localhost:8080/users/'
 ```
 
 #### GET One User
-```
+```javascript
 curl -v --location --request GET 'http://localhost:8080/users/100'
 > GET /users/100 HTTP/1.1
 > Host: localhost:8080
@@ -132,7 +132,7 @@ curl -v --location --request GET 'http://localhost:8080/users/100'
 ```
 
 #### DELETE One User
-```
+```javascript
 curl -v --location --request DELETE 'http://localhost:8080/users/100' \
 > --header 'Content-Type: application/json'
 > DELETE /users/100 HTTP/1.1
@@ -150,7 +150,7 @@ curl -v --location --request DELETE 'http://localhost:8080/users/100' \
 ```
 
 ##### User if not exist
-```
+```javascript
 curl -v --location --request DELETE 'http://localhost:8080/users/100' \
 > --header 'Content-Type: application/json'
 > DELETE /users/100 HTTP/1.1
@@ -165,4 +165,27 @@ curl -v --location --request DELETE 'http://localhost:8080/users/100' \
 < Content-Length: 58
 <
 {"ErrorMessage":"Requested user not found","ErrorCode":0}
+```
+
+### Visual Studio Code launch.json
+```json
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch",
+			"type": "go",
+			"request": "launch",
+			"mode": "auto",
+			"program": "${fileDirname}",
+			"env": {
+				"API_PORT" : "8089"
+			},
+			"args": []
+		}
+	]
+}
 ```
