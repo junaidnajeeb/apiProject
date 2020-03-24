@@ -2,6 +2,7 @@ package controller
 
 import (
 	"apiProject/modal"
+	"apiProject/utils"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -71,7 +72,7 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	_, ok := modal.UserList[userID]
 	if ok {
 		delete(modal.UserList, userID)
-		json.NewEncoder(w).Encode("Deleted")
+		json.NewEncoder(w).Encode(utils.Message(true, "Delete Successful"))
 		return
 	}
 
