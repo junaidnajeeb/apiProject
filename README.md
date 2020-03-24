@@ -30,20 +30,22 @@ export GOBIN=$GOPATH/bin
 ```
 ## Under workspace->src directory
 ```bash
-go install apiProject
+	go install apiProject
 ```
 ## Run from src folder
 ```bash
-./apiProject
+	./apiProject
 ```
 
 ## Dependency installed
 ```
-  go get -u github.com/gorilla/mux
-  go get -u github.com/stamblerre/gocode
-  go get -u github.com/ramya-rao-a/go-outline
-  go get -u github.com/sqs/goreturns
-  go get -u github.com/spf13/viper
+	go get -u github.com/gorilla/mux
+	go get -u github.com/stamblerre/gocode
+	go get -u github.com/ramya-rao-a/go-outline
+	go get -u github.com/sqs/goreturns
+	go get -u github.com/spf13/viper
+	go get -u github.com/go-sql-driver/mysql
+	go get -u github.com/jinzhu/gorm
 ```
 
 ## API details

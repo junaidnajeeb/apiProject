@@ -25,7 +25,7 @@ func GetOneUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(modal.APIErrorMessageInstance("Bad Requested user Id"))
+		json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Bad Requested user Id"))
 		return
 	}
 
@@ -35,7 +35,7 @@ func GetOneUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(modal.APIErrorMessageInstance("Requested user not found"))
+	json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Requested user not found"))
 	return
 }
 
@@ -47,7 +47,7 @@ func CreateUpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(modal.APIErrorMessageInstance("Bad request"))
+		json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Bad request"))
 		return
 	}
 
@@ -65,7 +65,7 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	userID, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(modal.APIErrorMessageInstance("Bad Requested user Id"))
+		json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Bad Requested user Id"))
 		return
 	}
 
@@ -77,7 +77,7 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(modal.APIErrorMessageInstance("Requested user not found"))
+	json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Requested user not found"))
 	return
 
 }

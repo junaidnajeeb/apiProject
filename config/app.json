@@ -2,5 +2,14 @@
 	"version" : "1.0",
 	"api": {
 		"port" : "8080"
+	},
+	"database" : {
+		"username" : "root",
+		"password" : "root",
+		"dbname" : "golang_api",
+		"hostname" : "127.0.0.1",
+		"maxIdleConnection" : 5,
+		"maxOpenConnection" : 20
+
 	}
 }
