@@ -1,6 +1,7 @@
 package app
 
 import (
+	"apiProject/utils"
 	"fmt"
 	"log"
 	"time"
@@ -23,7 +24,7 @@ func SetupDatabase() {
 
 	dbUri := fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8&parseTime=True&loc=Local", username, password, host, name)
 	//log.Println(dbUri)
-	log.Println("Database connected...")
+	utils.LoggerInfo("Database connected...")
 
 	conn, err := gorm.Open("mysql", dbUri)
 

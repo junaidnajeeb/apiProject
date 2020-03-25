@@ -46,6 +46,7 @@ export GOBIN=$GOPATH/bin
 	go get -u github.com/spf13/viper
 	go get -u github.com/go-sql-driver/mysql
 	go get -u github.com/jinzhu/gorm
+	go get -u github.com/sirupsen/logrus
 ```
 
 ## API details

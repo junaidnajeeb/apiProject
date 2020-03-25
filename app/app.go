@@ -2,11 +2,11 @@ package app
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
 	"apiProject/controller"
+	"apiProject/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
@@ -15,7 +15,7 @@ import (
 // SetupConfiguration Export all the api routes
 
 func SetupConfiguration() {
-	fmt.Println("app => SetupConfiguration")
+	utils.LoggerInfo("app => SetupConfiguration")
 
 	// name of config file (without extension)
 	viper.SetConfigName("app")
@@ -32,12 +32,14 @@ func SetupConfiguration() {
 	err := viper.ReadInConfig()
 
 	if err != nil {
-		log.Fatalf("Error while reading config file %s", err)
+		s := fmt.Sprintf("Error while reading config file %s", err)
+		utils.LoggerError(s)
 	}
 }
 
 func SetupRoutes() {
-	fmt.Println("app => SetupRoutes")
+
+	utils.LoggerInfo("app => SetupRoutes")
 
 	// creates a new instance of a mux router
 	router := mux.NewRouter().StrictSlash(true)
@@ -53,9 +55,9 @@ func SetupRoutes() {
 
 	port := viper.GetString("api.port")
 
-	fmt.Println("Starting API on port:", port)
+	utils.GetLogger().Info("Starting API on port:", port)
 
 	var connectionUrl = ":" + port
 
-	log.Fatal(http.ListenAndServe(connectionUrl, router))
+	utils.GetLogger().Fatal(http.ListenAndServe(connectionUrl, router))
 }
