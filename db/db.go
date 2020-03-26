@@ -1,4 +1,4 @@
-package app
+package db
 
 import (
 	"apiProject/utils"
@@ -44,6 +44,7 @@ func SetupDatabase() {
 
 	// SetConnMaxLifetime sets the maximum amount of time a connection may be reused.
 	dbConnection.DB().SetConnMaxLifetime(time.Hour)
+
 }
 
 func GetDB() *gorm.DB {

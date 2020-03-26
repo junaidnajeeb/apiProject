@@ -2,6 +2,8 @@ package main
 
 import (
 	"apiProject/app"
+	"apiProject/db"
+	"apiProject/modal"
 	"apiProject/utils"
 )
 
@@ -16,7 +18,9 @@ func main() {
 		utils.LoggerFatal("entry => main called")
 	*/
 	app.SetupConfiguration()
-	app.SetupDatabase()
+	db.SetupDatabase()
+	//Create DB/Migrate
+	db.GetDB().Debug().AutoMigrate(&modal.Account{})
 	app.SetupRoutes()
 
 }

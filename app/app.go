@@ -47,11 +47,15 @@ func SetupRoutes() {
 	// replace http.HandleFunc with myRouter.HandleFunc
 	router.HandleFunc("/", controller.HomeLinkHandler)
 
-	// User Map endpoints
+	// User endpoints
 	router.HandleFunc("/users", controller.GetAllUsersHandler).Methods("GET")
 	router.HandleFunc("/users/{id}", controller.GetOneUserHandler).Methods("GET")
 	router.HandleFunc("/users", controller.CreateUpdateUserHandler).Methods("POST")
 	router.HandleFunc("/users/{id}", controller.DeleteUserHandler).Methods("DELETE")
+
+	// Account endpoints
+	router.HandleFunc("/accounts", controller.AccountCreateHandler).Methods("POST")
+	router.HandleFunc("/accounts/{id}", controller.GetOneAccountHandler).Methods("GET")
 
 	port := viper.GetString("api.port")
 
