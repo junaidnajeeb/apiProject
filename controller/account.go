@@ -52,3 +52,22 @@ func GetOneAccountHandler(w http.ResponseWriter, r *http.Request) {
 	return
 
 }
+
+func DeleteAccountHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set(contentType, applicationJSON)
+	accountID, err := strconv.ParseUint(mux.Vars(r)["id"], 10, 64)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Bad Requested account Id"))
+		return
+	}
+
+	tempAccount := &modal.Account{}
+	response := tempAccount.DeleteOneAccount(accountID)
+
+	json.NewEncoder(w).Encode(response)
+	return
+
+}

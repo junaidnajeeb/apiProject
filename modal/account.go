@@ -15,6 +15,7 @@ type Account struct {
 	ID          uint       `json:"id" gorm:"primary_key"`
 	Name        string     `json:"name" gorm:"UNIQUE;NOT NULL"`
 	Description string     `json:"description" gorm:"type:TEXT"`
+	Status      string     `json:"status" gorm:"type:ENUM('active', 'inactive', 'deleted') NOT NULL DEFAULT 'active'"`
 	CreatedAt   time.Time  `json:"created_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time  `json:"updated_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
 	DeletedAt   *time.Time `json:"deleted_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
@@ -50,9 +51,28 @@ func (account *Account) GetOneAccount(id uint64) map[string]interface{} {
 		if err == gorm.ErrRecordNotFound {
 			return utils.Message(false, "Account not found")
 		}
-		return utils.Message(false, "Connection error. Please retry: ")
+		return utils.Message(false, "Connection error. "+err.Error())
 	}
 
+	response := utils.Message(true, "Success")
+	response["account"] = account
+
+	return response
+
+}
+
+func (account *Account) DeleteOneAccount(id uint64) map[string]interface{} {
+
+	err := db.GetDB().First(&account, id).Error
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return utils.Message(false, "Account not found")
+		}
+		return utils.Message(false, "Connection error. "+err.Error())
+	}
+
+	db.GetDB().Delete(&account)
 	response := utils.Message(true, "Success")
 	response["account"] = account
 

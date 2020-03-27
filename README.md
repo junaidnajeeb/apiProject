@@ -49,23 +49,159 @@ export GOBIN=$GOPATH/bin
 	go get -u github.com/sirupsen/logrus
 ```
 
-## API details
+# API details
 
-#### GET home
-```javascript
-curl -v --location --request GET 'http://localhost:8080'
-> GET / HTTP/1.1
-> Host: localhost:8080
-> User-Agent: curl/7.54.0
-> Accept: */*
->
-< HTTP/1.1 200 OK
-< Content-Type: application/json
-< Date: Mon, 23 Mar 2020 20:03:29 GMT
-< Content-Length: 16
-<
-"Welcome home!"
-```
+
+**GET home**
+----
+  Home/Index call
+
+* **URL**
+
+  /
+
+* **Method:**
+
+  `GET`
+
+*  **URL Params**
+
+   **Required:**
+
+   None
+
+   **Optional:**
+
+   None
+
+* **Data Params**
+
+  None
+
+* **Success Response:**
+
+  ```json
+	{
+		"home": {
+			"version": "1.0",
+			"message": "Welcome home!"
+		},
+		"message": "Home page",
+		"status": true
+	}
+  ```
+
+**Fetch one Account**
+----
+  call to get account details by id
+
+* **URL**
+
+  /accounts/id
+
+* **Method:**
+
+  `GET`
+
+*  **URL Params**
+
+   **Required:**
+
+   `id=integer`
+
+   **Optional:**
+
+   None
+
+* **Data Params**
+
+  None
+
+* **Success Response:**
+
+  `200 OK`
+  ```json
+  {
+    "account": {
+        "id": 1,
+        "name": "account name 2",
+        "description": "Some Description of the account",
+        "status": "active",
+        "created_at": "2020-03-26T15:17:08-07:00",
+        "updated_at": "2020-03-26T15:17:08-07:00",
+        "deleted_at": null
+    },
+    "message": "Success",
+    "status": true
+  }
+  ```
+* **Error Response:**
+
+  ```json
+  {
+    "message": "Account not found",
+    "status": false
+  }
+  ```
+
+**Create Account**
+----
+  call to create a new account
+
+* **URL**
+
+  /accounts
+
+* **Method:**
+
+  `POST`
+
+*  **URL Params**
+
+   **Required:**
+
+   None
+
+   **Optional:**
+
+   None
+
+* **Data Params**
+
+  ```json
+  {
+	"Name":"account name 4",
+	"Description":"Description of the account",
+	"Status" : "active"
+  }
+  ```
+
+* **Success Response:**
+
+  `201 Created`
+  ```json
+  {
+    "account": {
+        "id": 17,
+        "name": "account name 4",
+        "description": "Some Description of the account",
+        "status": "inactive",
+        "created_at": "2020-03-26T23:34:55.160182-07:00",
+        "updated_at": "2020-03-26T23:34:55.160182-07:00",
+        "deleted_at": null
+    },
+    "message": "Account has been created",
+    "status": true
+  }
+  ```
+* **Error Response:**
+
+  ```json
+  {
+    "message": "Failed to create account: Error 1062: Duplicate entry 'account name 4' for key 'name'",
+    "status": false
+  }
+  ```
 
 #### POST create/update User
 ```javascript

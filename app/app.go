@@ -56,6 +56,7 @@ func SetupRoutes() {
 	// Account endpoints
 	router.HandleFunc("/accounts", controller.AccountCreateHandler).Methods("POST")
 	router.HandleFunc("/accounts/{id}", controller.GetOneAccountHandler).Methods("GET")
+	router.HandleFunc("/accounts/{id}", controller.DeleteAccountHandler).Methods("DELETE")
 
 	port := viper.GetString("api.port")
 
