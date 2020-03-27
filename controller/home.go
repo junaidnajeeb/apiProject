@@ -15,6 +15,8 @@ func HomeLinkHandler(w http.ResponseWriter, r *http.Request) {
 	utils.LoggerInfo("homeLinkHandler called")
 
 	h := modal.Home{Version: viper.GetString("version"), Message: "Welcome home!"}
+	response := utils.Message(true, "Home page")
+	response["home"] = h
 
-	json.NewEncoder(w).Encode(h)
+	json.NewEncoder(w).Encode(response)
 }

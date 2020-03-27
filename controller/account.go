@@ -25,8 +25,12 @@ func AccountCreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	accountCreated := accountPointer.Create() //Create account
 
-	w.WriteHeader(http.StatusCreated)
+	if accountCreated["status"] == false {
+		json.NewEncoder(w).Encode(&accountCreated)
+		return
+	}
 
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(&accountCreated)
 
 }
@@ -37,7 +41,7 @@ func GetOneAccountHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Bad Requested user Id"))
+		json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Bad Requested account Id"))
 		return
 	}
 

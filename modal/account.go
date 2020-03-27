@@ -22,14 +22,15 @@ type Account struct {
 
 func (account *Account) Create() map[string]interface{} {
 
-	/*
-		##TODO
-		if resp, ok := account.Validate(); !ok {
-			return resp
-		}
-	*/
+	if resp, ok := account.validate(); !ok {
+		return resp
+	}
 
-	db.GetDB().Create(account)
+	err := db.GetDB().Create(account).Error
+
+	if err != nil {
+		return utils.Message(false, "Failed to create account: "+err.Error())
+	}
 
 	if account.ID <= 0 {
 		return utils.Message(false, "Failed to create account, connection error.")
@@ -47,9 +48,9 @@ func (account *Account) GetOneAccount(id uint64) map[string]interface{} {
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return utils.Message(false, "Email address not found")
+			return utils.Message(false, "Account not found")
 		}
-		return utils.Message(false, "Connection error. Please retry")
+		return utils.Message(false, "Connection error. Please retry: ")
 	}
 
 	response := utils.Message(true, "Success")
@@ -57,4 +58,13 @@ func (account *Account) GetOneAccount(id uint64) map[string]interface{} {
 
 	return response
 
+}
+
+func (account *Account) validate() (map[string]interface{}, bool) {
+
+	if len(account.Name) < 1 {
+		return utils.Message(false, "Name is required"), false
+	}
+
+	return utils.Message(false, "Requirement passed"), true
 }
