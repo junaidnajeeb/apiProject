@@ -48,6 +48,7 @@ export GOBIN=$GOPATH/bin
 	go get -u github.com/jinzhu/gorm
 	go get -u github.com/sirupsen/logrus
 	go get github.com/dgrijalva/jwt-go
+	go get -u golang.org/x/crypto/bcrypt
 ```
 
 # API details

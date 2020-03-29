@@ -55,7 +55,7 @@ func SetupRoutes() {
 	router.HandleFunc("/api/accounts/{id}", controller.DeleteAccountHandler).Methods("DELETE")
 
 	// User endpoints
-	router.HandleFunc("/api/users", controller.GetAllUsersHandler).Methods("GET")
+	//router.HandleFunc("/api/users", controller.GetAllUsersHandler).Methods("GET")
 	router.HandleFunc("/api/users/{id}", controller.GetOneUserHandler).Methods("GET")
 	router.HandleFunc("/api/users", controller.UserCreateHandler).Methods("POST")
 	//router.HandleFunc("/api/users", controller.UserUpdateHandler).Methods("PATCH") //TODO:: do this

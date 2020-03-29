@@ -3,7 +3,10 @@ package modal
 import (
 	"apiProject/db"
 	"apiProject/utils"
+	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
@@ -15,7 +18,7 @@ type User struct {
 	Password  string     `json:"password"`
 	Email     string     `json:"email" gorm:"unique_index:idx_email_account"`
 	AccountID uint64     `json:"account_id" gorm:"unique_index:idx_email_account"`
-	Token     string     `json:"token";sql:"-"`
+	Token     string     `json:"token" sql:"-"`
 	CreatedAt *time.Time `json:"created_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
 	UpdatedAt *time.Time `json:"updated_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
 	DeletedAt *time.Time `json:"deleted_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
@@ -32,6 +35,10 @@ func (user *User) UserCreate() map[string]interface{} {
 		return resp
 	}
 
+	// store password as hash
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hashedPassword)
+
 	err := db.GetDB().Create(user).Error
 
 	if err != nil {
@@ -43,6 +50,7 @@ func (user *User) UserCreate() map[string]interface{} {
 	}
 
 	response := utils.Message(true, "User has been created")
+	user.Password = ""
 	response["user"] = user
 	return response
 
@@ -60,6 +68,7 @@ func (user *User) GetOneUser(id uint64) map[string]interface{} {
 	}
 
 	response := utils.Message(true, "Success")
+	user.Password = ""
 	response["user"] = user
 
 	return response
@@ -89,6 +98,14 @@ func (user *User) validate() (map[string]interface{}, bool) {
 
 	if len(user.Name) < 1 {
 		return utils.Message(false, "User name is required"), false
+	}
+
+	if !strings.Contains(user.Email, "@") {
+		return utils.Message(false, "Email address is required"), false
+	}
+
+	if len(user.Password) < 6 {
+		return utils.Message(false, "Password is required"), false
 	}
 
 	return utils.Message(false, "Requirement passed"), true
