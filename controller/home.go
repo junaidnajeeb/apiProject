@@ -20,3 +20,14 @@ func HomeLinkHandler(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(response)
 }
+
+func PingHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set(contentType, applicationJSON)
+	utils.LoggerInfo("Ping called")
+
+	h := modal.Home{Version: viper.GetString("version"), Message: "Pong"}
+	response := utils.Message(true, "Ping page")
+	response["ping"] = h
+
+	json.NewEncoder(w).Encode(response)
+}

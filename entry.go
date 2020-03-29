@@ -20,7 +20,7 @@ func main() {
 	app.SetupConfiguration()
 	db.SetupDatabase()
 	//Create DB/Migrate
-	db.GetDB().Debug().AutoMigrate(&modal.Account{})
+	db.GetDB().Debug().Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&modal.Account{}, &modal.User{})
 	app.SetupRoutes()
 
 }

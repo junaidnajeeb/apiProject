@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"apiProject/controller"
@@ -45,18 +46,22 @@ func SetupRoutes() {
 	router := mux.NewRouter().StrictSlash(true)
 
 	// replace http.HandleFunc with myRouter.HandleFunc
-	router.HandleFunc("/", controller.HomeLinkHandler)
-
-	// User endpoints
-	router.HandleFunc("/users", controller.GetAllUsersHandler).Methods("GET")
-	router.HandleFunc("/users/{id}", controller.GetOneUserHandler).Methods("GET")
-	router.HandleFunc("/users", controller.CreateUpdateUserHandler).Methods("POST")
-	router.HandleFunc("/users/{id}", controller.DeleteUserHandler).Methods("DELETE")
+	router.HandleFunc("/api/", controller.HomeLinkHandler)
+	router.HandleFunc("/api/ping", controller.PingHandler)
 
 	// Account endpoints
-	router.HandleFunc("/accounts", controller.AccountCreateHandler).Methods("POST")
-	router.HandleFunc("/accounts/{id}", controller.GetOneAccountHandler).Methods("GET")
-	router.HandleFunc("/accounts/{id}", controller.DeleteAccountHandler).Methods("DELETE")
+	router.HandleFunc("/api/accounts", controller.AccountCreateHandler).Methods("POST")
+	router.HandleFunc("/api/accounts/{id}", controller.GetOneAccountHandler).Methods("GET")
+	router.HandleFunc("/api/accounts/{id}", controller.DeleteAccountHandler).Methods("DELETE")
+
+	// User endpoints
+	router.HandleFunc("/api/users", controller.GetAllUsersHandler).Methods("GET")
+	router.HandleFunc("/api/users/{id}", controller.GetOneUserHandler).Methods("GET")
+	router.HandleFunc("/api/users", controller.UserCreateHandler).Methods("POST")
+	//router.HandleFunc("/api/users", controller.UserUpdateHandler).Methods("PATCH") //TODO:: do this
+	router.HandleFunc("/api/users/{id}", controller.DeleteUserHandler).Methods("DELETE")
+
+	router.Use(JwtAuthentication) //attach JWT auth middleware
 
 	port := viper.GetString("api.port")
 
@@ -65,4 +70,25 @@ func SetupRoutes() {
 	var connectionUrl = ":" + port
 
 	utils.GetLogger().Fatal(http.ListenAndServe(connectionUrl, router))
+}
+
+var JwtAuthentication = func(next http.Handler) http.Handler {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		noAuthRequired := []string{"/api", "/api/ping"} //List of endpoints that doesn't require auth
+		requestPath := filepath.Clean(r.URL.Path)       //current request path
+
+		//check if request does not need authentication, serve the request if it doesn't need it
+		for _, value := range noAuthRequired {
+			if value == requestPath {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+
+		//TODO:: Implement the logic
+		utils.LoggerDebug("TODO:: Implement the logic for " + requestPath)
+		next.ServeHTTP(w, r)
+		return
+	})
 }

@@ -23,7 +23,7 @@ func AccountCreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accountCreated := accountPointer.Create() //Create account
+	accountCreated := accountPointer.AccountCreate() //Create account
 
 	if accountCreated["status"] == false {
 		json.NewEncoder(w).Encode(&accountCreated)
@@ -34,6 +34,7 @@ func AccountCreateHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&accountCreated)
 
 }
+
 func GetOneAccountHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set(contentType, applicationJSON)

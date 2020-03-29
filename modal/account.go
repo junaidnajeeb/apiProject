@@ -8,20 +8,23 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+const statusActive = "active"
+
 //a struct to rep account
 // id, created_at, deleted_at, updated_at is created by gorm
 type Account struct {
 	//gorm.Model
 	ID          uint       `json:"id" gorm:"primary_key"`
-	Name        string     `json:"name" gorm:"UNIQUE;NOT NULL"`
+	Name        string     `json:"name" gorm:"NOT NULL"`
 	Description string     `json:"description" gorm:"type:TEXT"`
 	Status      string     `json:"status" gorm:"type:ENUM('active', 'inactive', 'deleted') NOT NULL DEFAULT 'active'"`
+	Users       []User     `json:"users" gorm:"foreignkey:AccountID"`
 	CreatedAt   time.Time  `json:"created_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
 	UpdatedAt   time.Time  `json:"updated_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
 	DeletedAt   *time.Time `json:"deleted_at" gorm:"type:TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP"`
 }
 
-func (account *Account) Create() map[string]interface{} {
+func (account *Account) AccountCreate() map[string]interface{} {
 
 	if resp, ok := account.validate(); !ok {
 		return resp
@@ -84,6 +87,10 @@ func (account *Account) validate() (map[string]interface{}, bool) {
 
 	if len(account.Name) < 1 {
 		return utils.Message(false, "Name is required"), false
+	}
+
+	if len(account.Status) == 0 {
+		account.Status = statusActive
 	}
 
 	return utils.Message(false, "Requirement passed"), true
