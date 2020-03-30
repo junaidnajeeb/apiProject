@@ -6,12 +6,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
 const contentType = "Content-Type"
 const applicationJSON = "application/json"
+const accessToken = "access_token"
 
 /*
 func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,6 +44,37 @@ func UserCreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(&userCreated)
+
+}
+
+func LoginUserHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set(contentType, applicationJSON)
+
+	userLoginPointer := &modal.UserLogin{}
+	err := json.NewDecoder(r.Body).Decode(userLoginPointer)
+
+	if err != nil {
+		json.NewEncoder(w).Encode(modal.ErrorMessageInstance("Invalid user login request"))
+		return
+	}
+
+	// validate and generate token
+	userLoggedIn := modal.LoginUser(userLoginPointer.Email, userLoginPointer.Password)
+
+	if userLoggedIn["status"] == false {
+		json.NewEncoder(w).Encode(&userLoggedIn)
+		return
+	}
+	// Set the new token as the users `token` cookie if the app is using cookie for session management
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    accessToken,
+		Value:   userLoggedIn["token"].(string),
+		Expires: userLoggedIn["expiresAt"].(time.Time),
+	})
+
+	json.NewEncoder(w).Encode(&userLoggedIn)
+	return
 
 }
 

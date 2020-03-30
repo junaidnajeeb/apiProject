@@ -10,6 +10,8 @@
 		"hostname" : "127.0.0.1",
 		"maxIdleConnection" : 5,
 		"maxOpenConnection" : 20
-
+	},
+	"jwt" : {
+		"appSecret" : "THIS COMES FROM ENV VARIABLES, not commited to git"
 	}
 }

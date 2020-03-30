@@ -1,13 +1,18 @@
 package app
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"path/filepath"
 	"strings"
 
 	"apiProject/controller"
+	"apiProject/modal"
 	"apiProject/utils"
+
+	jwt "github.com/dgrijalva/jwt-go"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/viper"
@@ -60,6 +65,11 @@ func SetupRoutes() {
 	router.HandleFunc("/api/users", controller.UserCreateHandler).Methods("POST")
 	//router.HandleFunc("/api/users", controller.UserUpdateHandler).Methods("PATCH") //TODO:: do this
 	router.HandleFunc("/api/users/{id}", controller.DeleteUserHandler).Methods("DELETE")
+	router.HandleFunc("/api/users/login", controller.LoginUserHandler).Methods("POST")
+
+	//Authenticated endpoints
+	router.HandleFunc("/api/secret/product", controller.GetSecretProductHandler).Methods("GET")
+	router.HandleFunc("/api/secret/project", controller.GetSecretProjectHandler).Methods("GET")
 
 	router.Use(JwtAuthentication) //attach JWT auth middleware
 
@@ -75,20 +85,71 @@ func SetupRoutes() {
 var JwtAuthentication = func(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		noAuthRequired := []string{"/api", "/api/ping"} //List of endpoints that doesn't require auth
-		requestPath := filepath.Clean(r.URL.Path)       //current request path
+		authRequired := []string{"/api/secret/product", "/api/secret/project"} //List of endpoints that does requires auth
+		requestPath := filepath.Clean(r.URL.Path)                              //current request path
 
-		//check if request does not need authentication, serve the request if it doesn't need it
-		for _, value := range noAuthRequired {
+		//check
+		// I know i should be doing the other way around but this is just a demo
+		doAuth := false
+		for _, value := range authRequired {
 			if value == requestPath {
-				next.ServeHTTP(w, r)
-				return
+				doAuth = true
+				break
 			}
 		}
+		if doAuth == false {
+			next.ServeHTTP(w, r)
+			return
+		}
 
-		//TODO:: Implement the logic
-		utils.LoggerDebug("TODO:: Implement the logic for " + requestPath)
-		next.ServeHTTP(w, r)
-		return
+		response := make(map[string]interface{})
+
+		//TODO:: check cookie too
+		tokenHeader := r.Header.Get("Authorization")
+		if tokenHeader == "" { //Token is missing, returns with error code 403 Unauthorized
+			response = utils.Message(false, "Missing auth token")
+			w.WriteHeader(http.StatusForbidden)
+			w.Header().Add("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		splitted := strings.Split(tokenHeader, " ") //The token normally comes in format `Bearer {token-body}`, we check if the retrieved token matched this requirement
+		if len(splitted) != 2 {
+			response = utils.Message(false, "Invalid/Malformed auth token")
+			w.WriteHeader(http.StatusForbidden)
+			w.Header().Add("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		tokenPart := splitted[1] //Grab the token part, what we are truly interested in
+		tokenClaim := &modal.TokenClaim{}
+
+		token, err := jwt.ParseWithClaims(tokenPart, tokenClaim, func(token *jwt.Token) (interface{}, error) {
+			return []byte(viper.GetString("jwt.appSecret")), nil
+		})
+
+		if err != nil { //Malformed token, returns with http code 403 as usual
+			response = utils.Message(false, "Malformed authentication token")
+			w.WriteHeader(http.StatusForbidden)
+			w.Header().Add("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		if !token.Valid { //Token is invalid, maybe not signed on this server
+			response = utils.Message(false, "Token is not valid.")
+			w.WriteHeader(http.StatusForbidden)
+			w.Header().Add("Content-Type", "application/json")
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		//All good
+
+		ctx := context.WithValue(r.Context(), "user", tokenClaim.UserId)
+		r = r.WithContext(ctx)
+		next.ServeHTTP(w, r) //proceed in the middleware chain!
 	})
 }
