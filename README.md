@@ -1,3 +1,13 @@
+## Features
+Example for
+* JWT create token go-jwt
+* JWT validate token go-jwt
+* database hook
+* gorm modals (Account, User)
+* api handlers with CURD operations
+* Modal and Controller based API
+* using Viper for env/ file variables
+* logging using logrus
 
 ## Setup go path in VS code
 settings.json file
